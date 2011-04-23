@@ -1,0 +1,47 @@
+/** JS Rating plugin **/
+
+.rating {
+    cursor: pointer;
+    float: right;
+    margin-top: -47px;
+}
+
+.rating:after {
+    content: '.';
+    display: block;
+    height: 0;
+    width: 0;
+    visibility: hidden;
+}
+
+.cancel, .star {
+    float: left;
+    width: 17px;
+    height: 15px;
+    overflow: hidden;
+    text-indent: -999em;
+    cursor: pointer;
+}
+ 
+div.done, div.done a {
+    cursor: default;
+}
+ 
+.star, .star a {
+    background: url(../images/star.gif) no-repeat 0 0px;
+}
+ 
+.star a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-position: 0 0px;
+}
+ 
+div.rating div.on a {
+    background-position: 0 -16px;
+}
+
+div.rating div.hover a {
+    background-position: 0 -32px;
+}

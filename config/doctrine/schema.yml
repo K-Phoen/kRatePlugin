@@ -1,0 +1,34 @@
+Rate:
+  actAs:
+    Timestampable:
+
+  columns:
+    record_model:
+      type: string(255)
+      notnull: true
+    record_id:
+      type: integer
+      notnull: true
+    value:
+      type: integer
+      notnull: true
+<?php if(kRateTools::isGuardBindEnabled()):  ?>
+    user_id:
+      type: integer
+      notnull: false
+<?php endif; ?>
+
+  indexes:
+    record_model_record_id:
+      fields: [record_model, record_id]
+
+<?php if(kRateTools::isGuardBindEnabled()):  ?>
+  relations:
+    sfGuardUser:
+      alias: User
+      local: user_id
+      type: one
+      foreign: id
+      foreignType: many
+      foreignAlias: Rates
+<?php endif; ?>
