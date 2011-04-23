@@ -9,6 +9,7 @@ set up a noting system quickly.
 * enable the plugin in your **ProjectConfiguration** class
 
 _config/ProjectConfiguration.class.php_
+
 ```php
 <?php
 
@@ -26,6 +27,14 @@ class ProjectConfiguration extends sfProjectConfiguration
   }
   // ...
 }
+```
+
+* and activate the _rate_ module in your frontend app :
+
+_apps/frontend/config/settings.yml_
+
+```yaml
+enabled_modules:        [..., rate, ...]
 ```
 
 ## Doctrine behavior
@@ -46,7 +55,7 @@ After having rebuilt your models (`./symfony doctrine:build --all --and-load`), 
 
 ## Display rating stars
 
-Include the plugin assets in your _apps/front/config/view.yml_ file:
+Include the plugin assets in your _apps/frontend/config/view.yml_ file:
 
 ````yaml
 stylesheets:
@@ -61,6 +70,40 @@ javascripts:
 ```
 
 Include the rate/formRate component in your record template.
+
 ```php
 <?php include_component('rate', 'formRate', array('object' => $article)) ?>
+```
+
+## Configure the plugin
+
+### Maximum note
+
+The number of stars to display (the maximum note) can be configured in the _apps/frontend/app.yml_
+file :
+
+```yaml
+all:
+  # ...
+
+  kRatePlugin:
+    max:  5
+
+  # ...
+```
+
+### kRatePlugin and sfGuardPlugin
+
+A vote can be bound to a a sfGuardUser (enabled by default) :
+
+_apps/frontend/app.yml_
+
+```yaml
+all:
+  # ...
+
+  kRatePlugin:
+    guardbind: true
+
+  # ...
 ```
