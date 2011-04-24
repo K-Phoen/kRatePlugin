@@ -1,0 +1,31 @@
+<?php if (sfConfig::get('sf_environment') == 'test'): ?>
+RatableTestObject:
+  rated_object:
+    id: 1
+    name: 'I am rated o/'
+  non_rated_object:
+    id: 2
+    name: 'I am NOT rated ...'
+  multi_rated_object:
+    id: 3
+    name: 'People love me.'
+
+
+Rate:
+  first:
+    record_model: 'RatableTestObject'
+    record_id: 1
+    value: 4
+  second:
+    record_model: 'RatableTestObject'
+    record_id: 3
+    value: 1
+  third:
+    record_model: 'RatableTestObject'
+    record_id: 3
+    value: 3
+  fourth:
+    record_model: 'RatableTestObject'
+    record_id: 3
+    value: 5
+<?php endif; ?>

@@ -32,3 +32,15 @@ Rate:
       foreignType: many
       foreignAlias: Rates
 <?php endif; ?>
+
+
+<?php if (sfConfig::get('sf_environment') == 'test'): ?>
+RatableTestObject:
+  actAs:
+    Ratable:
+  
+  columns:
+    name:
+      type: string(255)
+      notnull: true
+<?php endif; ?>
