@@ -70,7 +70,7 @@ class Doctrine_Template_Ratable extends Doctrine_Template
    * @return mixed The current item.
    * @author Kevin Gomez <contact@kevingomez.fr>
    */
-  public function addRate(Rate $rate, sfUser $user)
+  public function addRate(Rate $rate, sfUser $user=null)
   {
     $rate->set('record_model', $this->getModel());
     $rate->set('record_id', $this->getItemId());
@@ -103,7 +103,7 @@ class Doctrine_Template_Ratable extends Doctrine_Template
    * @return Doctrine_Collection The rates query.
    * @author Kevin Gomez <contact@kevingomez.fr>
    */
-  public function getRatesQuery()
+  protected function getRatesQuery()
   {
     $query = Doctrine::getTable('Rate')->createQuery('n')
               ->where('n.record_id = ?', $this->getItemId())

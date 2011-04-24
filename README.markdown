@@ -107,3 +107,50 @@ all:
 
   # ...
 ```
+
+It's also possible to only allow authenticated users to vote (disabled by default) :
+
+_apps/frontend/app.yml_
+
+```yaml
+all:
+  # ...
+
+  kRatePlugin:
+    guardbind: true
+    restrict:  true
+
+  # ...
+```
+
+Note that both **guardbind** and **restrict** options have to be set to true.
+
+## New methods for ratables objects
+
+```php
+<?php
+$article = new Article(); // hasRates() : false, getNbRates() : 0, getAvgRating() : 0
+
+
+$rate = new Rate();
+$rate->setValue(3);
+
+$article->addRate($rate);
+
+$article->hasRates(); // true
+$article->getNbRates(); // 1
+$article->getAbgRating(); // 3.0
+
+
+$other_rate = new Rate();
+$other_rate->setValue(4);
+
+$article->addRate($rate, $this->getUser()); // when guardbind = true
+
+$article->hasRates(); // true
+$article->getNbRates(); // 2
+$article->getAbgRating(); // 3.5
+$article->getRate($this->getUser()); // returns a rate object corresponding to the given user (or null)
+$article->getAllRates();
+
+```
