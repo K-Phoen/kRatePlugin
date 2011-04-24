@@ -72,6 +72,11 @@ class Doctrine_Template_Ratable extends Doctrine_Template
    */
   public function addRate(Rate $rate, sfUser $user=null)
   {
+    if (is_null($this->getItemId()))
+    {
+      throw new LogicException('You can not rate an object before having saved it');
+    }
+
     $rate->set('record_model', $this->getModel());
     $rate->set('record_id', $this->getItemId());
 

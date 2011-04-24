@@ -10,7 +10,7 @@ Rate:
       type: integer
       notnull: true
     value:
-      type: integer
+      type: float
       notnull: true
 <?php if(kRateTools::isGuardBindEnabled()):  ?>
     user_id:

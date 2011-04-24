@@ -129,7 +129,7 @@ Note that both **guardbind** and **restrict** options have to be set to true.
 
 ```php
 <?php
-$article = new Article(); // hasRates() : false, getNbRates() : 0, getAvgRating() : 0
+$article = new Article(); // hasRates() : false, getNbRates() : 0, getAvgRating() : NULL
 
 
 $rate = new Rate();

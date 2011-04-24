@@ -5,6 +5,11 @@
  */
 class kRateTestTools
 {
+  public static function loadData()
+  {
+    Doctrine_Core::loadData(sfConfig::get('sf_test_dir').'/fixtures');
+  }
+
   public static function getNonRatedObject()
   {
     return Doctrine::getTable('RatableTestObject')->find(2);
