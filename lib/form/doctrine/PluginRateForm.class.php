@@ -95,8 +95,8 @@ abstract class PluginRateForm extends BaseRateForm
   protected function doUpdateObject($values)
   {
     $values = array_merge($values, array(
-      'record_id'     => $this->options['object']->get('id'),
-      'record_model'  => $this->options['object']->getTable()->getComponentName(),
+      'record_id'     => $this->options['object']->getItemId(),
+      'record_model'  => $this->options['object']->getModel(),
     ));
 
     // if needed, we bind the vote to an user
