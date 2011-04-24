@@ -18,12 +18,15 @@ abstract class BaseRateActions extends sfActions
    */
   public function executeAddRate(sfWebRequest $request)
   {
-    // we retrieve the object to rate
-    $this->object = Doctrine::getTable($request->getParameter('model'))->find($request->getParameter('id'));
+    // check if the current user can rate this item
+    $this->forward404Unless(kRateTools::canVote($this->getUser()), 'You can not rate this item.').
 
-    $this->form = new RateForm(null, array('user' => $this->getUser(), 'object' => $this->object));
-    
-    return $this->processForm($this->form, $request);
+    // we retrieve the object to rate
+    $object = Doctrine::getTable($request->getParameter('model'))->find($request->getParameter('id'));
+
+    $form = new RateForm(null, array('user' => $this->getUser(), 'object' => $object));
+
+    return $this->processForm($form, $request);
   }
 
   protected function processForm(sfForm $form, sfWebRequest $request)
@@ -43,7 +46,7 @@ abstract class BaseRateActions extends sfActions
 
       $this->redirect($request->getReferer());
     }
-    
+
     // incorrect form submitted: error 500
     $this->getResponse()->setHeaderOnly(true);
     $this->getResponse()->setStatusCode(500);

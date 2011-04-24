@@ -3,6 +3,8 @@
 class kRateTools
 {
   const GUARD_BIND_OPTION = 'app_kRatePlugin_guardbind';
+  const RESTRICT_OPTION   = 'app_kRatePlugin_restrict';
+
   const MAX_RATE_OPTION   = 'app_kRatePlugin_max';
   const MIN_RATE_OPTION   = 'app_kRatePlugin_min';
 
@@ -11,9 +13,38 @@ class kRateTools
    *
    * @return boolean
    */
-  static function isGuardBindEnabled()
+  static public function isGuardBindEnabled()
   {
     return sfConfig::get(self::GUARD_BIND_OPTION);
+  }
+
+  /**
+   * Tells if rating is restricted to authenticated users.
+   *
+   * @return bool
+   * @author Kevin Gomez <contact@kevingomez.fr>
+   */
+  static public function isRatingRestricted()
+  {
+    return self::isGuardBindEnabled() && sfConfig::get(self::RESTRICT_OPTION);
+  }
+
+  /**
+   * Tells if the given user can vote.
+   *
+   * @param sfUser $user The user to test
+   *
+   * @return bool
+   * @author Kevin Gomez <contact@kevingomez.fr>
+   */
+  static public function canVote(sfUser $user)
+  {
+    if (!self::isRatingRestricted())
+    {
+      return true;
+    }
+
+    return !is_null($user) && $user->isAuthenticated();
   }
 
   /**

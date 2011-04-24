@@ -34,12 +34,23 @@ abstract class PluginRateForm extends BaseRateForm
 
     // check ig the user already rated this item
     $note = null;
-    if (kRateTools::isGuardBindEnabled() && !is_null($options['user']) && $options['user']->isAuthenticated())
+    if (kRateTools::canVote($options['user']))
     {
       $note = $options['object']->getRate($options['user']);
     }
 
     parent::__construct($note, $options, $CSRFSecret);
+  }
+
+  /**
+   * Tells if the current user can vote using this form.
+   *
+   * @return bool
+   * @author Kevin Gomez <contact@kevingomez.fr>
+   */
+  public function canVote()
+  {
+    return kRateTools::canVote($this->options['user']);
   }
 
   /**
@@ -89,7 +100,7 @@ abstract class PluginRateForm extends BaseRateForm
     ));
 
     // if needed, we bind the vote to an user
-    if(kRateTools::isGuardBindEnabled() && !is_null($this->options['user']) && $this->options['user']->isAuthenticated())
+    if (kRateTools::canVote($this->options['user']))
     {
       $values['user_id'] = $this->options['user']->getGuardUser()->getId();
     }
