@@ -25,6 +25,26 @@ class Doctrine_Template_Ratable extends Doctrine_Template
   }
 
   /**
+   * Returns the average rating of the current item by computing it using
+   * the rates stored in the "rates" table.
+   *
+   * @return float The average rating.
+   * @author Kevin Gomez <contact@kevingomez.fr>
+   */
+  public function computeAvgRating()
+  {
+    return Doctrine_Query::create()
+            ->select('AVG(value) as avg_val')
+            ->from('Rate')
+            ->where('record_model = ? AND record_id = ?', array(
+                $this->getModel(),
+                $this->getItemId(),
+              ))
+            ->fetchOne()
+            ->avg_val;
+   }
+
+  /**
    * Tells whether the ratable item already has rates.
    *
    * @return bool
@@ -53,8 +73,15 @@ class Doctrine_Template_Ratable extends Doctrine_Template
     }
 
     // update the ratable object
-    $this->getInvoker()->setNbRates($this->getInvoker()->getNbRates() + 1);
-    $this->getInvoker()->setAvgRating(($this->getInvoker()->getAvgRating() + $rate->getValue()) / $this->getInvoker()->getNbRates());
+    if ($rate->getCreatedAt() == $rate->getUpdatedAt())
+    {
+      $this->getInvoker()->setNbRates($this->getInvoker()->getNbRates() + 1);
+      $this->getInvoker()->setAvgRating(($this->getInvoker()->getAvgRating() + $rate->getValue()) / $this->getInvoker()->getNbRates());
+    }
+    else
+    {
+      $this->getInvoker()->setAvgRating($this->getInvoker()->computeAvgRating());
+    }
 
     // update the rate object itself
     $rate->set('record_model', $this->getModel());
@@ -63,7 +90,7 @@ class Doctrine_Template_Ratable extends Doctrine_Template
     // if needed, we bind the vote to an user
     if(kRateTools::isGuardBindEnabled() && !is_null($user) && $user->isAuthenticated())
     {
-      $rate->set('user_id',$user->getGuardUser()->getId());
+      $rate->set('user_id', $user->getGuardUser()->getId());
     }
 
     // save all
