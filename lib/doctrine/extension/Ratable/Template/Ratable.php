@@ -4,38 +4,24 @@ class Doctrine_Template_Ratable extends Doctrine_Template
 {
   public function setTableDefinition()
   {
-    $this->addListener(new Doctrine_Template_Listener_Ratable($this->_options));
+    $this->hasColumn('avg_rating', 'float');
+    $this->hasColumn('nb_rates', 'integer', 4, array(
+        'unsigned'  => true,
+        'default'   => 0
+      )
+    );
+
+    $this->addListener(new Doctrine_Template_Listener_Ratable());
   }
 
   public function getModel()
   {
-    return $this->_invoker->getTable()->getComponentName();
+    return $this->getInvoker()->getTable()->getComponentName();
   }
 
   public function getItemId()
   {
-    return $this->_invoker->get('id');
-  }
-
-  /**
-   * Returns the average rating of the current item.
-   *
-   * @return float The average rating.
-   * @author Kevin Gomez <contact@kevingomez.fr>
-   */
-  public function getAvgRating()
-  {
-    return Doctrine_Query::create()
-            ->select('AVG(value) as avg_val')
-            ->from('Rate')
-            ->where('record_model = ? AND record_id = ?', array(
-                $this->getModel(),
-                $this->getItemId(),
-              ))
-            ->fetchOne()
-
-            ->avg_val;
-
+    return $this->getInvoker()->get('id');
   }
 
   /**
@@ -46,18 +32,7 @@ class Doctrine_Template_Ratable extends Doctrine_Template
    */
   public function hasRates()
   {
-    return $this->getNbRates() > 0;
-  }
-
-  /**
-   * Returns the total number of rates for the current item.
-   *
-   * @return int
-   * @author Kevin Gomez <contact@kevingomez.fr>
-   */
-  public function getNbRates()
-  {
-    return $this->getRatesQuery()->count();
+    return $this->getInvoker()->getNbRates() > 0;
   }
 
   /**
@@ -77,6 +52,11 @@ class Doctrine_Template_Ratable extends Doctrine_Template
       throw new LogicException('You can not rate an object before having saved it');
     }
 
+    // update the ratable object
+    $this->getInvoker()->setNbRates($this->getInvoker()->getNbRates() + 1);
+    $this->getInvoker()->setAvgRating(($this->getInvoker()->getAvgRating() + $rate->getValue()) / $this->getInvoker()->getNbRates());
+
+    // update the rate object itself
     $rate->set('record_model', $this->getModel());
     $rate->set('record_id', $this->getItemId());
 
@@ -86,9 +66,11 @@ class Doctrine_Template_Ratable extends Doctrine_Template
       $rate->set('user_id',$user->getGuardUser()->getId());
     }
 
+    // save all
     $rate->save();
+    $this->getInvoker()->save();
 
-    return $this->_invoker;
+    return $this->getInvoker();
   }
 
   /**
@@ -99,7 +81,7 @@ class Doctrine_Template_Ratable extends Doctrine_Template
    */
   public function getAllRates()
   {
-    return $this->getRatesQuery();
+    return $this->getRatesQuery()->execute();
   }
 
   /**

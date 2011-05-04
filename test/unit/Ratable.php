@@ -4,6 +4,11 @@
 require_once dirname(__FILE__).'/../bootstrap/unit.php';
 $t = new lime_test(26);
 
+// load test data
+echo 'Loading test data ...'.PHP_EOL;
+$data = new Doctrine_Data();
+$data->purge(array('Rate', 'RatableTestObject'));
+Doctrine_Core::loadData(dirname(__FILE__).'/../fixtures');
 
 // test object
 $obj = new RatableTestObject();
@@ -65,11 +70,11 @@ try {
 $t->comment('->addRate() works when used without user');
 $r = new Rate();
 $r->setValue(2.4);
-$rating = (2.4 + $non_rated_obj->getAvgRating()) / 2;
-$nb_rates = $non_rated_obj->getNbRates() + 1;
-$non_rated_obj->addRate($r);
+$rating = (2.4 + $rated_obj->getAvgRating()) / 2;
+$nb_rates = $rated_obj->getNbRates() + 1;
+$rated_obj->addRate($r);
 
-$t->is($non_rated_obj->hasRates(), true, '->hasRates() returns true');
-$t->is($non_rated_obj->getAvgRating(), $rating, sprintf('->getAvgRating() returns %.2f', $rated_obj));
-$t->is($non_rated_obj->getNbRates(), $nb_rates, sprintf('->getNbRates() returns %d', $nb_rates));
-$t->is(count($non_rated_obj->getAllRates()), $nb_rates, sprintf('->getAllRates() returns %d record', $nb_rates));
+$t->is($rated_obj->hasRates(), true, '->hasRates() returns true');
+$t->is($rated_obj->getAvgRating(), $rating, sprintf('->getAvgRating() returns %.2f', $rating));
+$t->is($rated_obj->getNbRates(), $nb_rates, sprintf('->getNbRates() returns %d', $nb_rates));
+$t->is(count($rated_obj->getAllRates()), $nb_rates, sprintf('->getAllRates() returns %d record', $nb_rates));

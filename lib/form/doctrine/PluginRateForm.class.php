@@ -14,7 +14,7 @@ abstract class PluginRateForm extends BaseRateForm
    * Constructor. Checks if the following options are given :
    *  - user : a sfUser instance representing the current user (if enabled in
    *    app.yml).
-   *  - object : the object to rate.
+   *  - ratable_object : the object to rate.
    *
    * @see sfFormObject
    * @return void
@@ -27,30 +27,24 @@ abstract class PluginRateForm extends BaseRateForm
       throw new LogicException('The "user" option is missing');
     }
 
-    if (!isset($options['object']))
+    if (!isset($options['ratable_object']))
     {
-      throw new LogicException('The "object" option is missing');
+      throw new LogicException('The "ratable_object" option is missing');
     }
 
-    // check ig the user already rated this item
-    $note = null;
+    // check if the user already rated this item
+    $rate = null;
     if (kRateTools::isGuardBindEnabled() && !is_null($options['user']) && $options['user']->isAuthenticated())
     {
-      $note = $options['object']->getRate($options['user']);
+      $rate = $options['ratable_object']->getRate($options['user']);
     }
 
-    parent::__construct($note, $options, $CSRFSecret);
+    parent::__construct($rate, $options, $CSRFSecret);
   }
 
-  /**
-   * Tells if the current user can vote using this form.
-   *
-   * @return bool
-   * @author Kevin Gomez <contact@kevingomez.fr>
-   */
-  public function canVote()
+  public function getRatableObject()
   {
-    return kRateTools::canVote($this->options['user']);
+    return $this->options['ratable_object'];
   }
 
   /**
@@ -75,10 +69,7 @@ abstract class PluginRateForm extends BaseRateForm
     ));
 
     // add labels
-    $this->widgetSchema->setLabel('value', 'Note');
-
-    // add help texts
-    //$this->widgetSchema->setHelp('value', sprintf('The note must be between %d and %d.', kRateTools::getMinNote(), kRateTools::getMaxNote()));
+    $this->widgetSchema->setLabel('value', 'Rate');
   }
 
   /**
@@ -95,8 +86,8 @@ abstract class PluginRateForm extends BaseRateForm
   protected function doUpdateObject($values)
   {
     $values = array_merge($values, array(
-      'record_id'     => $this->options['object']->getItemId(),
-      'record_model'  => $this->options['object']->getModel(),
+      'record_id'     => $this->getRatableObject()->getItemId(),
+      'record_model'  => $this->getRatableObject()->getModel(),
     ));
 
     // if needed, we bind the vote to an user

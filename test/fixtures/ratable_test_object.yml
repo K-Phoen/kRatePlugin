@@ -1,13 +1,16 @@
-<?php if (sfConfig::get('sf_environment') == 'test'): ?>
 RatableTestObject:
   rated_object:
     id: 1
     name: 'I am rated o/'
+    nb_rates: 1
+    avg_rating: 4
   non_rated_object:
     id: 2
     name: 'I am NOT rated ...'
   multi_rated_object:
     id: 3
+    nb_rates: 3
+    avg_rating: 3
     name: 'People love me.'
 
 
@@ -28,4 +31,3 @@ Rate:
     record_model: 'RatableTestObject'
     record_id: 3
     value: 5
-<?php endif; ?>

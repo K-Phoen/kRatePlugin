@@ -38,7 +38,7 @@ Rate:
 RatableTestObject:
   actAs:
     Ratable:
-  
+
   columns:
     name:
       type: string(255)

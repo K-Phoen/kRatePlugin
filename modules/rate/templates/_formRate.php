@@ -3,7 +3,7 @@
     action="<?php echo url_for('add-rate', array('model' => $object->getModel(), 'id' => $object->getItemId())) ?>"
     method="post"
     name="<?php echo $form->getName() ?>"
-    class="rating<?php if (!$form->canVote()): ?> disabled<?php endif; ?>"
+    class="rating<?php if (!kRateTools::canVote($sf_data->getRaw('sf_user'))): ?> disabled<?php endif; ?>"
     title="Note moyenne : <?php echo number_format($object->getAvgRating(), 1, '.', ''    ); ?>"
   >
   <fieldset>
