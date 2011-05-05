@@ -2,7 +2,7 @@
 
 // init
 require_once dirname(__FILE__).'/../bootstrap/unit.php';
-$t = new lime_test(26);
+$t = new lime_test(34);
 
 // load test data
 echo 'Loading test data ...'.PHP_EOL;
@@ -34,21 +34,28 @@ $t->comment('->getModel() returns the right model name.');
 $t->is($obj->getModel(), 'RatableTestObject', '->getModelName() returns the right model name');
 
 
-$t->comment('A non rated object behaves correcty');
+$t->comment('A new (and non rated) object behaves correctly');
 $t->is($obj->hasRates(), false, '->hasRates() returns false');
 $t->is($obj->getAvgRating(), 0, '->getAvgRating() returns 0');
 $t->is($obj->getNbRates(), 0, '->getNbRates() returns 0');
 $t->is(count($obj->getAllRates()), 0, '->getAllRates() returns 0 record');
 
 
-$t->comment('A rated object behaves correcty');
+$t->comment('A non rated object behaves correctly');
+$t->is($non_rated_obj->hasRates(), false, '->hasRates() returns false');
+$t->is($non_rated_obj->getAvgRating(), 0, '->getAvgRating() returns 0');
+$t->is($non_rated_obj->getNbRates(), 0, '->getNbRates() returns 0');
+$t->is(count($non_rated_obj->getAllRates()), 0, '->getAllRates() returns 0 record');
+
+
+$t->comment('A rated object behaves correctly');
 $t->is($rated_obj->hasRates(), true, '->hasRates() returns true');
 $t->is($rated_obj->getAvgRating(), 4.0, '->getAvgRating() returns 4.0');
 $t->is($rated_obj->getNbRates(), 1, '->getNbRates() returns 1');
 $t->is(count($rated_obj->getAllRates()), 1, '->getAllRates() returns 1 record');
 
 
-$t->comment('A multi rated object behaves correcty');
+$t->comment('A multi rated object behaves correctly');
 $t->is($multi_rated_obj->hasRates(), true, '->hasRates() returns true');
 $t->is($multi_rated_obj->getAvgRating(), 3.0, '->getAvgRating() returns 3.0');
 $t->is($multi_rated_obj->getNbRates(), 3, '->getNbRates() returns 3');
@@ -67,14 +74,26 @@ try {
 }
 
 
-$t->comment('->addRate() works when used without user');
+$t->comment('->addRate() works when used without user, on a rated object');
 $r = new Rate();
 $r->setValue(2.4);
-$rating = (2.4 + $rated_obj->getAvgRating()) / 2;
-$nb_rates = $rated_obj->getNbRates() + 1;
-$rated_obj->addRate($r);
+$nb_rates = $multi_rated_obj->getNbRates() + 1;
+$rating = (2.4 + $multi_rated_obj->getAvgRating()) / $nb_rates;
+$multi_rated_obj->addRate($r);
 
-$t->is($rated_obj->hasRates(), true, '->hasRates() returns true');
-$t->is($rated_obj->getAvgRating(), $rating, sprintf('->getAvgRating() returns %.2f', $rating));
-$t->is($rated_obj->getNbRates(), $nb_rates, sprintf('->getNbRates() returns %d', $nb_rates));
-$t->is(count($rated_obj->getAllRates()), $nb_rates, sprintf('->getAllRates() returns %d record', $nb_rates));
+$t->is($multi_rated_obj->hasRates(), true, '->hasRates() returns true');
+$t->is($multi_rated_obj->getAvgRating(), $rating, sprintf('->getAvgRating() returns %.2f', $rating));
+$t->is($multi_rated_obj->getNbRates(), $nb_rates, sprintf('->getNbRates() returns %d', $nb_rates));
+$t->is(count($multi_rated_obj->getAllRates()), $nb_rates, sprintf('->getAllRates() returns %d record', $nb_rates));
+
+
+$t->comment('->addRate() works when used without user, on a NON rated object');
+$rating = 3.3;
+$r = new Rate();
+$r->setValue($rating);
+$non_rated_obj->addRate($r);
+
+$t->is($non_rated_obj->hasRates(), true, '->hasRates() returns true');
+$t->is($non_rated_obj->getAvgRating(), $rating, sprintf('->getAvgRating() returns %.2f', $rating));
+$t->is($non_rated_obj->getNbRates(), 1, '->getNbRates() returns 1');
+$t->is(count($non_rated_obj->getAllRates()), 1, '->getAllRates() returns 1 record');
