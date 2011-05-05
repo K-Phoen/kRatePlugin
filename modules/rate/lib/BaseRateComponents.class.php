@@ -12,6 +12,6 @@ class BaseRateComponents extends sfComponents
 {
   public function executeFormRate(sfWebRequest $request)
   {
-    $this->form = new RateForm(null, array('user' => $this->getUser(), 'ratable_object' => $this->object));
+    $this->form = new RateForm(null, array('ratable_object' => $this->object));
   }
 }

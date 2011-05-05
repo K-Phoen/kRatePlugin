@@ -11,9 +11,13 @@
 abstract class PluginRateForm extends BaseRateForm
 {
   /**
+   * The current user.
+   */
+  protected static $user = null;
+
+
+  /**
    * Constructor. Checks if the following options are given :
-   *  - user : a sfUser instance representing the current user (if enabled in
-   *    app.yml).
    *  - ratable_object : the object to rate.
    *
    * @see sfFormObject
@@ -22,11 +26,6 @@ abstract class PluginRateForm extends BaseRateForm
    */
   public function __construct($object = null, $options = array(), $CSRFSecret = null)
   {
-    if (!isset($options['user']) && kRateTools::isGuardBindEnabled())
-    {
-      throw new LogicException('The "user" option is missing');
-    }
-
     if (!isset($options['ratable_object']))
     {
       throw new LogicException('The "ratable_object" option is missing');
@@ -34,12 +33,28 @@ abstract class PluginRateForm extends BaseRateForm
 
     // check if the user already rated this item
     $rate = null;
-    if (kRateTools::isGuardBindEnabled() && !is_null($options['user']) && $options['user']->isAuthenticated())
+    if (kRateTools::isGuardBindEnabled() && !is_null($this->getUser()) && $this->getUser()->isAuthenticated())
     {
-      $rate = $options['ratable_object']->getRate($options['user']);
+      $rate = $options['ratable_object']->getRate($this->getUser());
     }
 
     parent::__construct($rate, $options, $CSRFSecret);
+  }
+
+  /**
+   * Setter for the user
+   */
+  public static function setUser($user)
+  {
+    self::$user = $user;
+  }
+
+  /**
+   * Getter for the user
+   */
+  public function getUser()
+  {
+    return PluginRateForm::$user;
   }
 
   public function getRatableObject()
@@ -91,9 +106,9 @@ abstract class PluginRateForm extends BaseRateForm
     ));
 
     // if needed, we bind the vote to an user
-    if (kRateTools::isGuardBindEnabled() && !is_null($this->options['user']) && $this->options['user']->isAuthenticated())
+    if (kRateTools::isGuardBindEnabled() && !is_null($this->getUser()) && $this->getUser()->isAuthenticated())
     {
-      $values['user_id'] = $this->options['user']->getGuardUser()->getId();
+      $values['user_id'] = $this->getUser()->getGuardUser()->getId();
     }
 
     parent::doUpdateObject($values);

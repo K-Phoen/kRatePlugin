@@ -24,7 +24,7 @@ abstract class BaseRateActions extends sfActions
     // we retrieve the object to rate
     $object = Doctrine::getTable($request->getParameter('model'))->find($request->getParameter('id'));
 
-    $form = new RateForm(null, array('user' => $this->getUser(), 'ratable_object' => $object));
+    $form = new RateForm(null, array('ratable_object' => $object));
 
     return $this->processForm($form, $request);
   }

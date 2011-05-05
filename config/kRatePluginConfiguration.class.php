@@ -17,7 +17,17 @@ class kRatePluginConfiguration extends sfPluginConfiguration
    */
   public function initialize()
   {
+    // add the routing
     $this->dispatcher->connect('routing.load_configuration',
       array('kRateRouting', 'listenToRoutingLoadConfigurationEvent'));
+
+    // allows us to access the current user in the RateForm
+    $this->dispatcher->connect('context.load_factories',
+      array($this, 'listenToLoadFactoriesEvent'));
+  }
+
+  public function listenToLoadFactoriesEvent(sfEvent $event)
+  {
+    PluginRateForm::setUser($event->getSubject()->getUser());
   }
 }
