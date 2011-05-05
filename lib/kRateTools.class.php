@@ -30,24 +30,6 @@ class kRateTools
   }
 
   /**
-   * Tells if the given user can vote.
-   *
-   * @param sfUser $user The user to test
-   *
-   * @return bool
-   * @author Kevin Gomez <contact@kevingomez.fr>
-   */
-  static public function canVote(sfUser $user)
-  {
-    if (!self::isRatingRestricted())
-    {
-      return true;
-    }
-
-    return !is_null($user) && $user->isAuthenticated();
-  }
-
-  /**
    * Returns the mininum rate allowed.
    *
    * @return int The minimum rate.

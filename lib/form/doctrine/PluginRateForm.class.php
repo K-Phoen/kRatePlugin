@@ -83,14 +83,11 @@ abstract class PluginRateForm extends BaseRateForm
       'choices' => array_keys($this->generatePossibleRates()),
     ));
 
-    if (kRateTools::isRatingRestricted())
-    {
-      $this->validatorSchema->setPostValidator(
-        new sfValidatorSchemaCompare(
-          kRateTools::canVote($this->getUser), sfValidatorSchemaCompare::EQUAL, true
-        )
-      );
-    }
+    $this->validatorSchema->setPostValidator(
+      new sfValidatorSchemaCompare(
+        $this->getUser()->canVote(), sfValidatorSchemaCompare::EQUAL, true
+      )
+    );
 
     // add labels
     $this->widgetSchema->setLabel('value', 'Rate');

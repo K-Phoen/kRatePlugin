@@ -21,6 +21,10 @@ class kRatePluginConfiguration extends sfPluginConfiguration
     $this->dispatcher->connect('routing.load_configuration',
       array('kRateRouting', 'listenToRoutingLoadConfigurationEvent'));
 
+    // add methods to the user
+    $this->dispatcher->connect('user.method_not_found',
+      array('kRateUser', 'listenToMethodNotFound'));
+
     // allows us to access the current user in the RateForm
     $this->dispatcher->connect('context.load_factories',
       array($this, 'listenToLoadFactoriesEvent'));

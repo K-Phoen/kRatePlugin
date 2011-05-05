@@ -72,6 +72,11 @@ class Doctrine_Template_Ratable extends Doctrine_Template
       throw new LogicException('You can not rate an object before having saved it');
     }
 
+    if (!is_null($user) && !$user->canVote())
+    {
+      throw new LogicException('The given user can not vote !');
+    }
+
     // update the ratable object
     if ($rate->getCreatedAt() == $rate->getUpdatedAt())
     {
