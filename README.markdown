@@ -135,11 +135,11 @@ $article = new Article(); // hasRates() : false, getNbRates() : 0, getAvgRating(
 $rate = new Rate();
 $rate->setValue(3);
 
-$article->addRate($rate);
+$article->addRate($rate); // add the rate and update the article
 
 $article->hasRates(); // true
 $article->getNbRates(); // 1
-$article->getAbgRating(); // 3.0
+$article->getAvgRating(); // 3.0
 
 
 $other_rate = new Rate();
@@ -149,8 +149,16 @@ $article->addRate($rate, $this->getUser()); // when guardbind = true
 
 $article->hasRates(); // true
 $article->getNbRates(); // 2
-$article->getAbgRating(); // 3.5
+$article->getAvgRating(); // 3.5
 $article->getRate($this->getUser()); // returns a rate object corresponding to the given user (or null)
 $article->getAllRates();
 
+```
+
+## New methods for users
+
+```php
+<?php
+// in an action for instance :
+$this->getUser()->canVote(); // returns a boolean depanding on the guardbind and the restrict options, and the authentication state of the user
 ```
