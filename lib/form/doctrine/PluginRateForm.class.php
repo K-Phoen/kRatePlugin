@@ -26,9 +26,9 @@ abstract class PluginRateForm extends BaseRateForm
    */
   public function __construct($object = null, $options = array(), $CSRFSecret = null)
   {
-    if (!isset($options['ratable_object']))
+    if (!isset($options['ratable_object']) || is_null($options['ratable_object']))
     {
-      throw new LogicException('The "ratable_object" option is missing');
+      throw new LogicException('The "ratable_object" option is null missing');
     }
 
     // check if the user already rated this item
@@ -82,6 +82,15 @@ abstract class PluginRateForm extends BaseRateForm
     $this->validatorSchema['value'] = new sfValidatorChoice(array(
       'choices' => array_keys($this->generatePossibleRates()),
     ));
+
+    if (kRateTools::isRatingRestricted())
+    {
+      $this->validatorSchema->setPostValidator(
+        new sfValidatorSchemaCompare(
+          kRateTools::canVote($this->getUser), sfValidatorSchemaCompare::EQUAL, true
+        )
+      );
+    }
 
     // add labels
     $this->widgetSchema->setLabel('value', 'Rate');
